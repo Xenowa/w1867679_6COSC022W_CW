@@ -1,0 +1,9 @@
+CREATE TABLE IF NOT EXISTS certifications (
+  certificateId INT AUTO_INCREMENT PRIMARY KEY,
+  userId INT NOT NULL,
+  title VARCHAR(255) NOT NULL,
+  institution VARCHAR(255) NOT NULL,
+  url VARCHAR(255) DEFAULT NULL,
+  completedAt DATETIME NOT NULL,
+  CONSTRAINT fk_certifications_profile FOREIGN KEY (userId) REFERENCES profiles(userId) ON DELETE CASCADE
+) ENGINE=InnoDB;
