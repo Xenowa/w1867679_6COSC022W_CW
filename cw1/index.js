@@ -12,11 +12,8 @@ var methodOverride = require("method-override");
 
 var app = (module.exports = express());
 
-// set our default template engine to "ejs"
-// which prevents the need for using file extensions
-app.set("view engine", "ejs");
-
-// set views for error and 404 pages
+// view engine
+app.set("view engine", "hbs");
 app.set("views", path.join(__dirname, "views"));
 
 // define a custom res.message() method
@@ -61,21 +58,14 @@ app.use(function (req, res, next) {
   // expose "hasMessages"
   res.locals.hasMessages = !!msgs.length;
 
-  /* This is equivalent:
-   res.locals({
-     messages: msgs,
-     hasMessages: !! msgs.length
-   });
-  */
-
   next();
   // empty or "flush" the messages so they
   // don't build up
   req.session.messages = [];
 });
 
-// load controllers
-require("./lib/boot")(app, { verbose: !module.parent });
+// routes
+app.use(require("./routes/mainRoutes"));
 
 app.use(function (err, req, res, next) {
   // log it
