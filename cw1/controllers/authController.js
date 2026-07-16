@@ -100,3 +100,33 @@ exports.register = async function (req, res, next) {
     connection.release();
   }
 };
+
+exports.verifyEmail = async function (req, res, next) {
+  const rawToken = req.query.token;
+
+  if (!rawToken) {
+    res.message("Invalid verification link.");
+    return res.redirect("/auth/login");
+  }
+
+  try {
+    const userId = await tokenService.verifyAndConsumeToken(
+      pool,
+      "email_verifications",
+      "emailId",
+      rawToken,
+    );
+
+    if (!userId) {
+      res.message("That verification link is invalid or has expired.");
+      return res.redirect("/auth/login");
+    }
+
+    await pool.query("UPDATE users SET emailVerified = TRUE WHERE userId = ?", [userId]);
+
+    res.message("Email verified! You can now log in.");
+    res.redirect("/auth/login");
+  } catch (err) {
+    next(err);
+  }
+};
