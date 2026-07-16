@@ -10,6 +10,7 @@ const BCRYPT_COST = 10;
 const ALLOWED_EMAIL_DOMAIN = "@eastminster.ac.uk";
 const PASSWORD_MIN_LENGTH = 8;
 const VERIFICATION_TOKEN_TTL_MS = 24 * 60 * 60 * 1000;
+const PASSWORD_RESET_TOKEN_TTL_MS = 60 * 60 * 1000;
 
 // Defining a hashed constant used for preventing timing email enumeration attacks
 const DUMMY_PASSWORD_HASH = bcrypt.hashSync(
@@ -17,11 +18,21 @@ const DUMMY_PASSWORD_HASH = bcrypt.hashSync(
   BCRYPT_COST,
 );
 
-function validateRegistration(body) {
+function validatePasswordStrength(password) {
   const errors = [];
+  if (password.length < PASSWORD_MIN_LENGTH) {
+    errors.push(`Password must be at least ${PASSWORD_MIN_LENGTH} characters.`);
+  } else if (!/[A-Z]/.test(password)) {
+    errors.push("Password must contain at least one uppercase letter.");
+  }
+  return errors;
+}
+
+function validateRegistration(body) {
   const fullName = (body.fullName || "").trim();
   const email = (body.email || "").trim().toLowerCase();
   const password = body.password || "";
+  const errors = [];
 
   if (!fullName) errors.push("Full name is required.");
 
@@ -33,11 +44,7 @@ function validateRegistration(body) {
     );
   }
 
-  if (password.length < PASSWORD_MIN_LENGTH) {
-    errors.push(`Password must be at least ${PASSWORD_MIN_LENGTH} characters.`);
-  } else if (!/[A-Z]/.test(password)) {
-    errors.push("Password must contain at least one uppercase letter.");
-  }
+  errors.push(...validatePasswordStrength(password));
 
   return { errors, fullName, email, password };
 }
@@ -198,4 +205,67 @@ exports.logout = function (req, res, next) {
     res.clearCookie("sid");
     res.redirect("/auth/login");
   });
+};
+
+exports.showForgotPasswordForm = function (req, res) {
+  res.render("auth/forgot-password");
+};
+
+exports.forgotPassword = async function (req, res, next) {
+  const email = (req.body.email || "").trim().toLowerCase();
+
+  try {
+    if (email) {
+      const [rows] = await pool.query("SELECT userId FROM users WHERE email = ?", [email]);
+      const user = rows[0];
+
+      if (user) {
+        const rawToken = await tokenService.createToken(
+          pool,
+          "password_resets",
+          user.userId,
+          PASSWORD_RESET_TOKEN_TTL_MS,
+        );
+        const resetUrl = `${req.protocol}://${req.get("host")}/auth/reset-password?token=${rawToken}`;
+        await emailService.sendPasswordResetEmail(email, resetUrl);
+      }
+    }
+
+    // same message whether or not the email exists — avoids enumeration
+    res.message("If that email is registered, a password reset link has been sent.");
+    res.redirect("/auth/login");
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.showResetPasswordForm = function (req, res) {
+  res.render("auth/reset-password", { token: req.query.token || "" });
+};
+
+exports.resetPassword = async function (req, res, next) {
+  const token = req.body.token || "";
+  const password = req.body.password || "";
+
+  function invalid(message) {
+    return res.status(400).render("auth/reset-password", { token, errors: [message] });
+  }
+
+  if (!token) return invalid("Invalid or expired reset link.");
+
+  const passwordErrors = validatePasswordStrength(password);
+  if (passwordErrors.length) return invalid(passwordErrors[0]);
+
+  try {
+    const userId = await tokenService.verifyAndConsumeToken(pool, "password_resets", "passId", token);
+    if (!userId) return invalid("That reset link is invalid or has expired.");
+
+    const passwordHash = await bcrypt.hash(password, BCRYPT_COST);
+    await pool.query("UPDATE users SET passwordHash = ? WHERE userId = ?", [passwordHash, userId]);
+
+    res.message("Password updated! You can now log in.");
+    res.redirect("/auth/login");
+  } catch (err) {
+    next(err);
+  }
 };
