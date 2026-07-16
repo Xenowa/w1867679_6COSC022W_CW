@@ -100,10 +100,13 @@ app.use(express.static(path.join(__dirname, "public")));
 
 // routes
 app.use(require("./routes/mainRoutes"));
+app.use("/auth", require("./routes/authRoutes"));
 
 app.use(function (err, req, res, next) {
   if (err && err.code === "EBADCSRFTOKEN") {
-    res.message("Your session expired or the form was tampered with. Please try again.");
+    res.message(
+      "Your session expired or the form was tampered with. Please try again.",
+    );
     return res.redirect(req.get("Referrer") || "/");
   }
 
