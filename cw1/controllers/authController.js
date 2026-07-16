@@ -11,6 +11,12 @@ const ALLOWED_EMAIL_DOMAIN = "@eastminster.ac.uk";
 const PASSWORD_MIN_LENGTH = 8;
 const VERIFICATION_TOKEN_TTL_MS = 24 * 60 * 60 * 1000;
 
+// Defining a hashed constant used for preventing timing email enumeration attacks
+const DUMMY_PASSWORD_HASH = bcrypt.hashSync(
+  "no-such-user-placeholder",
+  BCRYPT_COST,
+);
+
 function validateRegistration(body) {
   const errors = [];
   const fullName = (body.fullName || "").trim();
@@ -122,11 +128,74 @@ exports.verifyEmail = async function (req, res, next) {
       return res.redirect("/auth/login");
     }
 
-    await pool.query("UPDATE users SET emailVerified = TRUE WHERE userId = ?", [userId]);
+    await pool.query("UPDATE users SET emailVerified = TRUE WHERE userId = ?", [
+      userId,
+    ]);
 
     res.message("Email verified! You can now log in.");
     res.redirect("/auth/login");
   } catch (err) {
     next(err);
   }
+};
+
+exports.showLoginForm = function (req, res) {
+  res.render("auth/login", { email: "" });
+};
+
+exports.login = async function (req, res, next) {
+  const email = (req.body.email || "").trim().toLowerCase();
+  const password = req.body.password || "";
+
+  function invalidCredentials() {
+    res
+      .status(400)
+      .render("auth/login", { email, errors: ["Invalid email or password."] });
+  }
+
+  if (!email || !password) return invalidCredentials();
+
+  try {
+    const [rows] = await pool.query(
+      "SELECT userId, email, passwordHash, role, emailVerified FROM users WHERE email = ?",
+      [email],
+    );
+    const user = rows[0];
+
+    // Running a bcrypt compare with a dummy hash ensures that the time taken is similar whether or not the user exists.
+    const passwordMatches = await bcrypt.compare(
+      password,
+      user ? user.passwordHash : DUMMY_PASSWORD_HASH,
+    );
+
+    if (!user || !passwordMatches) return invalidCredentials();
+
+    if (!user.emailVerified) {
+      return res.status(400).render("auth/login", {
+        email,
+        errors: ["Please verify your email before logging in."],
+      });
+    }
+
+    req.session.regenerate(function (err) {
+      if (err) return next(err);
+      req.session.user = {
+        userId: user.userId,
+        email: user.email,
+        role: user.role,
+      };
+      res.message("Logged in successfully.");
+      res.redirect("/");
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.logout = function (req, res, next) {
+  req.session.destroy(function (err) {
+    if (err) return next(err);
+    res.clearCookie("sid");
+    res.redirect("/auth/login");
+  });
 };
