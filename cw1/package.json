@@ -24,6 +24,7 @@
     "method-override": "^3.0.0",
     "morgan": "^1.10.0",
     "multer": "^2.2.0",
-    "mysql2": "^3.23.0"
+    "mysql2": "^3.23.0",
+    "nodemailer": "^9.0.3"
   }
 }
