@@ -1,0 +1,15 @@
+<nav class="nav">
+  <a class="nav-brand" href="/">Alumni Influencers Platform</a>
+  <div class="nav-links">
+    {{#if user}}
+      <span class="nav-user">{{user.email}}</span>
+      <form action="/auth/logout?_method=DELETE" method="post" class="nav-logout">
+        <input type="hidden" name="_csrf" value="{{csrfToken}}">
+        <button type="submit">Logout</button>
+      </form>
+    {{else}}
+      <a href="/auth/login">Login</a>
+      <a href="/auth/register">Register</a>
+    {{/if}}
+  </div>
+</nav>
