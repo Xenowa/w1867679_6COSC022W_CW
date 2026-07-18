@@ -1,0 +1,69 @@
+<section class="profile-section">
+  <h3>Employment history</h3>
+
+  <div class="credential-list">
+    {{#each items}}
+      <details class="credential-item">
+        <summary>{{this.role}} at {{this.company}}</summary>
+
+        <form action="/profile/employment/{{this.id}}?_method=PUT" method="post" class="auth-form">
+          <input type="hidden" name="_csrf" value="{{../csrfToken}}">
+
+          <label>Company</label>
+          <input type="text" name="company" value="{{this.company}}" required>
+
+          <label>Role</label>
+          <input type="text" name="role" value="{{this.role}}" required>
+
+          <label>Industry sector (optional)</label>
+          <input type="text" name="industrySector" value="{{this.industrySector}}">
+
+          <label>Location (optional)</label>
+          <input type="text" name="location" value="{{this.location}}">
+
+          <label>Started on</label>
+          <input type="date" name="startedAt" value="{{formatDateInput this.startedAt}}" required>
+
+          <label>Ended on (leave blank if current)</label>
+          <input type="date" name="endedAt" value="{{formatDateInput this.endedAt}}">
+
+          <button type="submit">Save changes</button>
+        </form>
+
+        <form action="/profile/employment/{{this.id}}?_method=DELETE" method="post">
+          <input type="hidden" name="_csrf" value="{{../csrfToken}}">
+          <button type="submit" class="delete-button">Delete</button>
+        </form>
+      </details>
+    {{else}}
+      <p class="credential-empty">No employment history added yet.</p>
+    {{/each}}
+  </div>
+
+  <details class="credential-add">
+    <summary>Add employment record</summary>
+    <form action="/profile/employment" method="post" class="auth-form">
+      <input type="hidden" name="_csrf" value="{{csrfToken}}">
+
+      <label>Company</label>
+      <input type="text" name="company" required>
+
+      <label>Role</label>
+      <input type="text" name="role" required>
+
+      <label>Industry sector (optional)</label>
+      <input type="text" name="industrySector">
+
+      <label>Location (optional)</label>
+      <input type="text" name="location">
+
+      <label>Started on</label>
+      <input type="date" name="startedAt" required>
+
+      <label>Ended on (leave blank if current)</label>
+      <input type="date" name="endedAt">
+
+      <button type="submit">Add</button>
+    </form>
+  </details>
+</section>

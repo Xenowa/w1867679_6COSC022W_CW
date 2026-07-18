@@ -92,8 +92,18 @@ app.use(function (req, res, next) {
 app.set("view engine", "hbs");
 app.set("views", path.join(__dirname, "views"));
 hbs.registerPartials(path.join(__dirname, "views", "partials"));
+
+// Registering Handlebars helpers
 hbs.registerHelper("eq", function (a, b) {
   return a === b;
+});
+hbs.registerHelper("formatDateInput", function (date) {
+  if (!date) return "";
+  const d = new Date(date);
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
 });
 
 // serve static files

@@ -12,57 +12,13 @@
 
 <p><a href="/profile/edit">Edit profile</a></p>
 
-<h2>Degrees</h2>
-{{#if degrees.length}}
-  <ul>
-    {{#each degrees}}
-      <li>{{this.title}} &mdash; {{this.institution}}</li>
-    {{/each}}
-  </ul>
-{{else}}
-  <p>No degrees added yet.</p>
-{{/if}}
+{{!-- Credential sections --}}
+{{> credential_section items=degrees resourcePath="degrees" sectionTitle="Degrees" sectionTitleSingular="degree" csrfToken=csrfToken}}
 
-<h2>Certifications</h2>
-{{#if certifications.length}}
-  <ul>
-    {{#each certifications}}
-      <li>{{this.title}} &mdash; {{this.institution}}</li>
-    {{/each}}
-  </ul>
-{{else}}
-  <p>No certifications added yet.</p>
-{{/if}}
+{{> credential_section items=certifications resourcePath="certifications" sectionTitle="Certifications" sectionTitleSingular="certification" csrfToken=csrfToken}}
 
-<h2>Licences</h2>
-{{#if licences.length}}
-  <ul>
-    {{#each licences}}
-      <li>{{this.title}} &mdash; {{this.institution}}</li>
-    {{/each}}
-  </ul>
-{{else}}
-  <p>No licences added yet.</p>
-{{/if}}
+{{> credential_section items=licences resourcePath="licences" sectionTitle="Licences" sectionTitleSingular="licence" csrfToken=csrfToken}}
 
-<h2>Professional courses</h2>
-{{#if courses.length}}
-  <ul>
-    {{#each courses}}
-      <li>{{this.title}} &mdash; {{this.institution}}</li>
-    {{/each}}
-  </ul>
-{{else}}
-  <p>No professional courses added yet.</p>
-{{/if}}
+{{> credential_section items=courses resourcePath="courses" sectionTitle="Professional courses" sectionTitleSingular="course" csrfToken=csrfToken}}
 
-<h2>Employment history</h2>
-{{#if employment.length}}
-  <ul>
-    {{#each employment}}
-      <li>{{this.role}} at {{this.company}}</li>
-    {{/each}}
-  </ul>
-{{else}}
-  <p>No employment history added yet.</p>
-{{/if}}
+{{> employment_section items=employment csrfToken=csrfToken}}
