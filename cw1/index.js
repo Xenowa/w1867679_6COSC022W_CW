@@ -13,7 +13,6 @@ const session = require("express-session");
 const methodOverride = require("method-override");
 const helmet = require("helmet");
 const hbs = require("hbs");
-const { csrfSync } = require("csrf-sync");
 
 const app = (module.exports = express());
 
@@ -64,7 +63,7 @@ app.use(function (req, res, next) {
   // expose "hasMessages"
   res.locals.hasMessages = !!msgs.length;
 
-  // populated once auth exists (Phase 3); nav partial reads this
+  // populated once auth exists, nav partial reads this
   res.locals.user = req.session.user || null;
 
   next();
@@ -76,12 +75,11 @@ app.use(function (req, res, next) {
 // allow overriding methods in query (?_method=put)
 app.use(methodOverride("_method"));
 
-// CSRF protection (synchroniser token pattern, matches report §5.4)
-const { csrfSynchronisedProtection, generateToken } = csrfSync({
-  getTokenFromRequest: function (req) {
-    return req.body._csrf;
-  },
-});
+// CSRF protection
+const {
+  csrfSynchronisedProtection,
+  generateToken,
+} = require("./middleware/csrf");
 app.use(csrfSynchronisedProtection);
 app.use(function (req, res, next) {
   res.locals.csrfToken = generateToken(req);
@@ -94,6 +92,9 @@ app.use(function (req, res, next) {
 app.set("view engine", "hbs");
 app.set("views", path.join(__dirname, "views"));
 hbs.registerPartials(path.join(__dirname, "views", "partials"));
+hbs.registerHelper("eq", function (a, b) {
+  return a === b;
+});
 
 // serve static files
 app.use(express.static(path.join(__dirname, "public")));
@@ -101,6 +102,7 @@ app.use(express.static(path.join(__dirname, "public")));
 // routes
 app.use(require("./routes/mainRoutes"));
 app.use("/auth", require("./routes/authRoutes"));
+app.use("/profile", require("./routes/profileRoutes"));
 
 app.use(function (err, req, res, next) {
   if (err && err.code === "EBADCSRFTOKEN") {

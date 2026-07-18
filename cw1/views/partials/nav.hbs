@@ -2,6 +2,9 @@
   <a class="nav-brand" href="/">Alumni Influencers Platform</a>
   <div class="nav-links">
     {{#if user}}
+      {{#if (eq user.role "alumnus")}}
+        <a href="/profile">Profile</a>
+      {{/if}}
       <span class="nav-user">{{user.email}}</span>
       <form action="/auth/logout" method="post" class="nav-logout">
         <input type="hidden" name="_csrf" value="{{csrfToken}}">

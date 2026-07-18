@@ -1,0 +1,68 @@
+<h1>My profile</h1>
+
+<p>Profile completion: {{completionPercent}}%</p>
+
+{{#if profile.profileImage}}
+  <img src="{{profile.profileImage}}" alt="Profile image" class="profile-image">
+{{/if}}
+
+<h2>{{profile.fullName}}</h2>
+{{#if profile.bio}}<p>{{profile.bio}}</p>{{/if}}
+{{#if profile.linkedinUrl}}<p><a href="{{profile.linkedinUrl}}" target="_blank" rel="noopener">LinkedIn</a></p>{{/if}}
+
+<p><a href="/profile/edit">Edit profile</a></p>
+
+<h2>Degrees</h2>
+{{#if degrees.length}}
+  <ul>
+    {{#each degrees}}
+      <li>{{this.title}} &mdash; {{this.institution}}</li>
+    {{/each}}
+  </ul>
+{{else}}
+  <p>No degrees added yet.</p>
+{{/if}}
+
+<h2>Certifications</h2>
+{{#if certifications.length}}
+  <ul>
+    {{#each certifications}}
+      <li>{{this.title}} &mdash; {{this.institution}}</li>
+    {{/each}}
+  </ul>
+{{else}}
+  <p>No certifications added yet.</p>
+{{/if}}
+
+<h2>Licences</h2>
+{{#if licences.length}}
+  <ul>
+    {{#each licences}}
+      <li>{{this.title}} &mdash; {{this.institution}}</li>
+    {{/each}}
+  </ul>
+{{else}}
+  <p>No licences added yet.</p>
+{{/if}}
+
+<h2>Professional courses</h2>
+{{#if courses.length}}
+  <ul>
+    {{#each courses}}
+      <li>{{this.title}} &mdash; {{this.institution}}</li>
+    {{/each}}
+  </ul>
+{{else}}
+  <p>No professional courses added yet.</p>
+{{/if}}
+
+<h2>Employment history</h2>
+{{#if employment.length}}
+  <ul>
+    {{#each employment}}
+      <li>{{this.role}} at {{this.company}}</li>
+    {{/each}}
+  </ul>
+{{else}}
+  <p>No employment history added yet.</p>
+{{/if}}
