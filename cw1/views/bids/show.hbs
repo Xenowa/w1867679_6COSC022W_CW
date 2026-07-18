@@ -1,0 +1,41 @@
+<h1>Bid for tomorrow's Alumni of the Day</h1>
+
+<p>Tomorrow's slot: {{formatDateDisplay status.slotDate}}</p>
+<p>Monthly wins used: {{status.monthlyUsage.used}} / {{status.monthlyUsage.limit}}</p>
+
+{{#if status.ownBid}}
+  <p>Your current bid: &pound;{{status.ownBid.amount}}</p>
+  <p>
+    Status:
+    {{#if status.winning}}
+      <strong>You are currently winning.</strong>
+    {{else}}
+      You are not currently winning.
+    {{/if}}
+  </p>
+
+  <form action="/bids/{{status.ownBid.bidId}}?_method=PUT" method="post" class="auth-form">
+    <input type="hidden" name="_csrf" value="{{csrfToken}}">
+
+    <label>New bid amount (must be higher than your current bid)</label>
+    <input type="number" name="amount" step="0.01" min="0.01" required>
+
+    <button type="submit">Increase bid</button>
+  </form>
+
+  <form action="/bids/{{status.ownBid.bidId}}?_method=DELETE" method="post">
+    <input type="hidden" name="_csrf" value="{{csrfToken}}">
+    <button type="submit" class="delete-button">Cancel bid</button>
+  </form>
+{{else}}
+  <form action="/bids" method="post" class="auth-form">
+    <input type="hidden" name="_csrf" value="{{csrfToken}}">
+
+    <label>Bid amount (&pound;)</label>
+    <input type="number" name="amount" step="0.01" min="0.01" required>
+
+    <button type="submit">Place bid</button>
+  </form>
+{{/if}}
+
+<p><a href="/bids/history">View bid history</a></p>

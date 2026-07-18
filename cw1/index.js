@@ -105,6 +105,14 @@ hbs.registerHelper("formatDateInput", function (date) {
   const day = String(d.getDate()).padStart(2, "0");
   return `${year}-${month}-${day}`;
 });
+hbs.registerHelper("formatDateDisplay", function (date) {
+  if (!date) return "";
+  return new Date(date).toLocaleDateString("en-GB", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
+});
 
 // serve static files
 app.use(express.static(path.join(__dirname, "public")));
@@ -113,6 +121,7 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use(require("./routes/mainRoutes"));
 app.use("/auth", require("./routes/authRoutes"));
 app.use("/profile", require("./routes/profileRoutes"));
+app.use("/bids", require("./routes/bidRoutes"));
 
 app.use(function (err, req, res, next) {
   if (err && err.code === "EBADCSRFTOKEN") {

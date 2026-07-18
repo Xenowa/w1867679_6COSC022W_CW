@@ -4,6 +4,7 @@
     {{#if user}}
       {{#if (eq user.role "alumnus")}}
         <a href="/profile">Profile</a>
+        <a href="/bids">Bids</a>
       {{/if}}
       <span class="nav-user">{{user.email}}</span>
       <form action="/auth/logout" method="post" class="nav-logout">

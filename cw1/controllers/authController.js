@@ -216,7 +216,10 @@ exports.forgotPassword = async function (req, res, next) {
 
   try {
     if (email) {
-      const [rows] = await pool.query("SELECT userId FROM users WHERE email = ?", [email]);
+      const [rows] = await pool.query(
+        "SELECT userId FROM users WHERE email = ?",
+        [email],
+      );
       const user = rows[0];
 
       if (user) {
@@ -231,8 +234,10 @@ exports.forgotPassword = async function (req, res, next) {
       }
     }
 
-    // same message whether or not the email exists — avoids enumeration
-    res.message("If that email is registered, a password reset link has been sent.");
+    // same message whether or not the email exists - avoids enumeration
+    res.message(
+      "If that email is registered, a password reset link has been sent.",
+    );
     res.redirect("/auth/login");
   } catch (err) {
     next(err);
@@ -248,7 +253,9 @@ exports.resetPassword = async function (req, res, next) {
   const password = req.body.password || "";
 
   function invalid(message) {
-    return res.status(400).render("auth/reset-password", { token, errors: [message] });
+    return res
+      .status(400)
+      .render("auth/reset-password", { token, errors: [message] });
   }
 
   if (!token) return invalid("Invalid or expired reset link.");
@@ -257,11 +264,19 @@ exports.resetPassword = async function (req, res, next) {
   if (passwordErrors.length) return invalid(passwordErrors[0]);
 
   try {
-    const userId = await tokenService.verifyAndConsumeToken(pool, "password_resets", "passId", token);
+    const userId = await tokenService.verifyAndConsumeToken(
+      pool,
+      "password_resets",
+      "passId",
+      token,
+    );
     if (!userId) return invalid("That reset link is invalid or has expired.");
 
     const passwordHash = await bcrypt.hash(password, BCRYPT_COST);
-    await pool.query("UPDATE users SET passwordHash = ? WHERE userId = ?", [passwordHash, userId]);
+    await pool.query("UPDATE users SET passwordHash = ? WHERE userId = ?", [
+      passwordHash,
+      userId,
+    ]);
 
     res.message("Password updated! You can now log in.");
     res.redirect("/auth/login");

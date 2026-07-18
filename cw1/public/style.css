@@ -256,6 +256,21 @@ h1 a {
   background: #fdecec;
 }
 
+.bid-history {
+  border-collapse: collapse;
+  width: 100%;
+  max-width: 600px;
+}
+.bid-history th,
+.bid-history td {
+  text-align: left;
+  padding: 8px 12px;
+  border-bottom: 1px solid #e2e2e2;
+}
+.bid-history th {
+  font-weight: 600;
+}
+
 @media screen and (min-width: 768px) {
   .nav {
     justify-content: space-between;

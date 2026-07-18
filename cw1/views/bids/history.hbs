@@ -1,0 +1,26 @@
+<h1>Bid history</h1>
+
+{{#if history.length}}
+  <table class="bid-history">
+    <thead>
+      <tr>
+        <th>Slot date</th>
+        <th>Amount</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      {{#each history}}
+        <tr>
+          <td>{{formatDateDisplay this.slotDate}}</td>
+          <td>&pound;{{this.amount}}</td>
+          <td>{{this.status}}</td>
+        </tr>
+      {{/each}}
+    </tbody>
+  </table>
+{{else}}
+  <p class="credential-empty">No bids placed yet.</p>
+{{/if}}
+
+<p><a href="/bids">Back to bidding</a></p>
