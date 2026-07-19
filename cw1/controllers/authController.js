@@ -150,6 +150,39 @@ exports.showLoginForm = function (req, res) {
   res.render("auth/login", { email: "" });
 };
 
+exports.resendVerification = async function (req, res, next) {
+  const email = (req.body.email || "").trim().toLowerCase();
+
+  try {
+    if (email) {
+      const [rows] = await pool.query(
+        "SELECT userId FROM users WHERE email = ? AND emailVerified = FALSE",
+        [email],
+      );
+      const user = rows[0];
+
+      if (user) {
+        const rawToken = await tokenService.createToken(
+          pool,
+          "email_verifications",
+          user.userId,
+          VERIFICATION_TOKEN_TTL_MS,
+        );
+        const verifyUrl = `${req.protocol}://${req.get("host")}/auth/verify-email?token=${rawToken}`;
+        await emailService.sendVerificationEmail(email, verifyUrl);
+      }
+    }
+
+    // same message whether or not the email exists/is already verified - avoids enumeration
+    res.message(
+      "If that email is registered and not yet verified, a new verification link has been sent.",
+    );
+    res.redirect("/auth/login");
+  } catch (err) {
+    next(err);
+  }
+};
+
 exports.login = async function (req, res, next) {
   const email = (req.body.email || "").trim().toLowerCase();
   const password = req.body.password || "";

@@ -9,6 +9,11 @@ const authRateLimiter = require("../middleware/authRateLimiter");
 router.get("/register", authController.showRegisterForm);
 router.post("/register", authRateLimiter(), authController.register);
 router.get("/verify-email", authController.verifyEmail);
+router.post(
+  "/resend-verification",
+  authRateLimiter(),
+  authController.resendVerification,
+);
 router.get("/login", authController.showLoginForm);
 router.post("/login", authRateLimiter(), authController.login);
 router.post("/logout", requireAuth, authController.logout);
