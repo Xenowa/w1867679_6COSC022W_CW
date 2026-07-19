@@ -6,9 +6,12 @@
         <a href="/profile">Profile</a>
         <a href="/bids">Bids</a>
       {{/if}}
+      {{#if (eq user.role "developer")}}
+        <a href="/keys">API Keys</a>
+      {{/if}}
       <span class="nav-user">{{user.email}}</span>
       <form action="/auth/logout" method="post" class="nav-logout">
-        <input type="hidden" name="_csrf" value="{{csrfToken}}">
+        <input type="hidden" name="_csrf" value="{{csrfToken}}" />
         <button type="submit">Logout</button>
       </form>
     {{else}}

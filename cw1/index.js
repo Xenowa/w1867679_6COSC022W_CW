@@ -122,6 +122,7 @@ app.use(require("./routes/mainRoutes"));
 app.use("/auth", require("./routes/authRoutes"));
 app.use("/profile", require("./routes/profileRoutes"));
 app.use("/bids", require("./routes/bidRoutes"));
+app.use("/keys", require("./routes/apiKeyRoutes"));
 
 app.use(function (err, req, res, next) {
   if (err && err.code === "EBADCSRFTOKEN") {

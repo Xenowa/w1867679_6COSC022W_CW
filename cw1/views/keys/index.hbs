@@ -1,0 +1,44 @@
+<h1>API keys</h1>
+
+<table class="bid-history">
+  <thead>
+    <tr>
+      <th>Label</th>
+      <th>Created</th>
+      <th>Status</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    {{#each keys}}
+      <tr>
+        <td>{{this.label}}</td>
+        <td>{{formatDateDisplay this.createdAt}}</td>
+        <td>{{#if this.revokedAt}}Revoked{{else}}Active{{/if}}</td>
+        <td>
+          <a href="/keys/{{this.keyId}}/stats">Usage stats</a>
+          {{#unless this.revokedAt}}
+            <form action="/keys/{{this.keyId}}?_method=DELETE" method="post" class="inline-form">
+              <input type="hidden" name="_csrf" value="{{../csrfToken}}">
+              <button type="submit" class="delete-button">Revoke</button>
+            </form>
+          {{/unless}}
+        </td>
+      </tr>
+    {{else}}
+      <tr><td colspan="4">No API keys yet.</td></tr>
+    {{/each}}
+  </tbody>
+</table>
+
+<details class="credential-add">
+  <summary>Generate new API key</summary>
+  <form action="/keys" method="post" class="auth-form">
+    <input type="hidden" name="_csrf" value="{{csrfToken}}">
+
+    <label>Label (optional)</label>
+    <input type="text" name="label" placeholder="e.g. AR App Production Key">
+
+    <button type="submit">Generate key</button>
+  </form>
+</details>
