@@ -29,13 +29,13 @@ app.response.message = function (msg) {
   return this;
 };
 
-// log
+// log (Morgan is used to log every request, including those that were rejected)
 if (!module.parent) app.use(logger("dev"));
 
 // security headers
 app.use(helmet());
 
-// parse request bodies (req.body)
+// parse request bodies of every request (req.body)
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 

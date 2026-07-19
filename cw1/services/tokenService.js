@@ -36,6 +36,7 @@ async function verifyAndConsumeToken(connection, table, idColumn, rawToken) {
   const row = rows[0];
   if (!row) return null;
 
+  // marking used at time instead of deleting so re-use attempts could be failed through checks
   await connection.query("UPDATE ?? SET usedAt = NOW() WHERE ?? = ?", [
     table,
     idColumn,
