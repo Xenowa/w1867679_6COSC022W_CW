@@ -4,6 +4,7 @@ const express = require("express");
 const router = express.Router();
 const alumniController = require("../controllers/alumniController");
 const requireApiKey = require("../middleware/requireApiKey");
+const apiRateLimiter = require("../middleware/apiRateLimiter");
 
 /**
  * @swagger
@@ -44,9 +45,16 @@ const requireApiKey = require("../middleware/requireApiKey");
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/ApiError'
+ *       429:
+ *         description: Too many requests - rate limit exceeded.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ApiError'
  */
 router.get(
   "/alumni/today",
+  apiRateLimiter(),
   requireApiKey("read:alumni_of_day"),
   alumniController.getTodaysAlumnus,
 );
