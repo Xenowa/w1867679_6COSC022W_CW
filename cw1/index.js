@@ -13,6 +13,8 @@ const session = require("express-session");
 const methodOverride = require("method-override");
 const helmet = require("helmet");
 const hbs = require("hbs");
+const swaggerUi = require("swagger-ui-express");
+const swaggerSpec = require("./config/swagger");
 
 const app = (module.exports = express());
 
@@ -123,6 +125,24 @@ app.use("/auth", require("./routes/authRoutes"));
 app.use("/profile", require("./routes/profileRoutes"));
 app.use("/bids", require("./routes/bidRoutes"));
 app.use("/keys", require("./routes/apiKeyRoutes"));
+app.use("/api", require("./routes/publicRoutes"));
+
+app.get("/api-docs/swagger.json", function (req, res) {
+  res.json(swaggerSpec);
+});
+app.use(
+  "/api-docs",
+
+  // relaxing content security policy for Swagger UI to allow inline scripts
+  helmet.contentSecurityPolicy({
+    directives: {
+      ...helmet.contentSecurityPolicy.getDefaultDirectives(),
+      "script-src": ["'self'", "'unsafe-inline'"],
+    },
+  }),
+  swaggerUi.serve,
+  swaggerUi.setup(swaggerSpec),
+);
 
 app.use(function (err, req, res, next) {
   if (err && err.code === "EBADCSRFTOKEN") {
