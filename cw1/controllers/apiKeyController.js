@@ -58,3 +58,30 @@ exports.revokeKey = async function (req, res, next) {
     next(err);
   }
 };
+
+exports.showStats = async function (req, res, next) {
+  try {
+    // scoped to userId so a developer can see only their own key's stats
+    const [[key]] = await pool.query(
+      "SELECT keyId, label FROM api_keys WHERE keyId = ? AND userId = ?",
+      [req.params.id, req.session.user.userId],
+    );
+    if (!key) {
+      res.message("API key not found.");
+      return res.redirect("/keys");
+    }
+
+    const [byEndpoint] = await pool.query(
+      "SELECT endpoint, COUNT(*) AS count FROM api_key_usage WHERE keyId = ? GROUP BY endpoint ORDER BY count DESC",
+      [key.keyId],
+    );
+    const [recent] = await pool.query(
+      "SELECT endpoint, ipAddress, accessedAt FROM api_key_usage WHERE keyId = ? ORDER BY accessedAt DESC LIMIT 50",
+      [key.keyId],
+    );
+
+    res.render("keys/stats", { key, byEndpoint, recent });
+  } catch (err) {
+    next(err);
+  }
+};

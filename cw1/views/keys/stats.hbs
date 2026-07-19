@@ -1,0 +1,49 @@
+<h1>Usage stats: {{key.label}}</h1>
+
+<h2>Requests by endpoint</h2>
+{{#if byEndpoint.length}}
+  <table class="bid-history">
+    <thead>
+      <tr>
+        <th>Endpoint</th>
+        <th>Count</th>
+      </tr>
+    </thead>
+    <tbody>
+      {{#each byEndpoint}}
+        <tr>
+          <td>{{this.endpoint}}</td>
+          <td>{{this.count}}</td>
+        </tr>
+      {{/each}}
+    </tbody>
+  </table>
+{{else}}
+  <p class="credential-empty">No usage recorded yet.</p>
+{{/if}}
+
+<h2>Recent requests</h2>
+{{#if recent.length}}
+  <table class="bid-history">
+    <thead>
+      <tr>
+        <th>Endpoint</th>
+        <th>IP address</th>
+        <th>Accessed at</th>
+      </tr>
+    </thead>
+    <tbody>
+      {{#each recent}}
+        <tr>
+          <td>{{this.endpoint}}</td>
+          <td>{{this.ipAddress}}</td>
+          <td>{{formatDateDisplay this.accessedAt}}</td>
+        </tr>
+      {{/each}}
+    </tbody>
+  </table>
+{{else}}
+  <p class="credential-empty">No usage recorded yet.</p>
+{{/if}}
+
+<p><a href="/keys">Back to API keys</a></p>
