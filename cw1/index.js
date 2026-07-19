@@ -145,6 +145,10 @@ app.use(function (req, res, next) {
 
 /* istanbul ignore next */
 if (!module.parent) {
+  // Initiate the cron cycle
+  require("./tasks/scheduler")();
+
+  // Initialize the application
   const port = process.env.PORT || 3000;
   app.listen(port);
   console.log("Express started on port " + port);

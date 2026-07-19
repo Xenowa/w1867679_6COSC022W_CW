@@ -1,0 +1,41 @@
+<section class="profile-section">
+  <h3>Event attendance</h3>
+
+  <p>
+    Bonus bid slot this month:
+    {{#if profile.monthlyExtraSlot}}<strong>active</strong>
+      (4 wins allowed){{else}}not active (3 wins allowed){{/if}}
+  </p>
+
+  <div class="credential-list">
+    {{#each eventAttendances}}
+      <div class="credential-item">
+        <div class="event-row">{{this.eventName}}
+          -
+          {{formatDateDisplay this.attendedOn}}</div>
+      </div>
+    {{else}}
+      <p class="credential-empty">No event attendance recorded yet.</p>
+    {{/each}}
+  </div>
+
+  <details class="credential-add">
+    <summary>Record event attendance</summary>
+    <form action="/profile/event-attendance" method="post" class="auth-form">
+      <input type="hidden" name="_csrf" value="{{csrfToken}}" />
+
+      <label>Event name</label>
+      <input
+        type="text"
+        name="eventName"
+        placeholder="e.g. Alumni Networking Evening"
+        required
+      />
+
+      <label>Date attended</label>
+      <input type="date" name="attendedOn" required />
+
+      <button type="submit">Record attendance</button>
+    </form>
+  </details>
+</section>

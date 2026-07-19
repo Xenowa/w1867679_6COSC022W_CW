@@ -59,4 +59,6 @@ router.post("/employment", employmentController.create);
 router.put("/employment/:id", employmentController.update);
 router.delete("/employment/:id", employmentController.remove);
 
+router.post("/event-attendance", profileController.recordEventAttendance);
+
 module.exports = router;

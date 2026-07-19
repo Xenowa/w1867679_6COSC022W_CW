@@ -32,8 +32,20 @@ async function fetchFullProfile(userId) {
     "SELECT *, employmentId AS id FROM employment_history WHERE userId = ? ORDER BY startedAt DESC",
     [userId],
   );
+  const [eventAttendances] = await pool.query(
+    "SELECT * FROM event_attendances WHERE userId = ? ORDER BY attendedOn DESC",
+    [userId],
+  );
 
-  return { profile, degrees, certifications, licences, courses, employment };
+  return {
+    profile,
+    degrees,
+    certifications,
+    licences,
+    courses,
+    employment,
+    eventAttendances,
+  };
 }
 
 function calculateCompletion(data) {
@@ -131,6 +143,35 @@ exports.uploadImage = async function (req, res, next) {
       req.session.user.userId,
     ]);
     res.message("Profile image updated.");
+    res.redirect("/profile");
+  } catch (err) {
+    next(err);
+  }
+};
+
+// Adding functionality to add bonus bid slot for those who attended for events
+exports.recordEventAttendance = async function (req, res, next) {
+  const eventName = (req.body.eventName || "").trim();
+  const attendedOn = (req.body.attendedOn || "").trim();
+
+  if (!eventName || !attendedOn) {
+    res.message("Event name and date are required.");
+    return res.redirect("/profile");
+  }
+
+  try {
+    await pool.query(
+      "INSERT INTO event_attendances (userId, eventName, attendedOn) VALUES (?, ?, ?)",
+      [req.session.user.userId, eventName, attendedOn],
+    );
+    // grants the 4th monthly bid slot for the current month
+    await pool.query(
+      "UPDATE profiles SET monthlyExtraSlot = TRUE WHERE userId = ?",
+      [req.session.user.userId],
+    );
+    res.message(
+      "Attendance recorded - you now have a bonus bid slot this month.",
+    );
     res.redirect("/profile");
   } catch (err) {
     next(err);
