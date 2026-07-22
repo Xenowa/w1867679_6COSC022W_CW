@@ -59,4 +59,298 @@ router.get(
   alumniController.getTodaysAlumnus,
 );
 
+/**
+ * @swagger
+ * /api/alumni:
+ *   get:
+ *     summary: Browse the filterable alumni directory
+ *     description: >
+ *       Returns alumni profiles with their derived programme/graduationYear
+ *       (from their most recently completed degree) and current employment.
+ *       Consumed by the analytics dashboard's alumni directory view.
+ *     tags:
+ *       - Public API
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: programme
+ *         schema: { type: string }
+ *       - in: query
+ *         name: graduationYear
+ *         schema: { type: integer }
+ *       - in: query
+ *         name: industrySector
+ *         schema: { type: string }
+ *     responses:
+ *       200:
+ *         description: List of matching alumni.
+ *       400:
+ *         description: Invalid graduationYear.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ApiError'
+ *       401: { $ref: '#/components/responses/Unauthorized' }
+ *       403: { $ref: '#/components/responses/Forbidden' }
+ *       429: { $ref: '#/components/responses/TooManyRequests' }
+ */
+router.get(
+  "/alumni",
+  apiRateLimiter(),
+  requireApiKey("read:alumni"),
+  alumniController.listAlumni,
+);
+
+/**
+ * @swagger
+ * /api/analytics/skills-gap:
+ *   get:
+ *     summary: Curriculum skills gap (frequency proxy)
+ *     description: >
+ *       No curriculum reference data exists to diff against, so alumni
+ *       certifications and professional courses are ranked by completion
+ *       count and banded into critical/significant/emerging severity.
+ *     tags:
+ *       - Analytics
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: programme
+ *         schema: { type: string }
+ *       - in: query
+ *         name: graduationYear
+ *         schema: { type: integer }
+ *     responses:
+ *       200: { description: Ranked, severity-banded skills. }
+ *       400: { description: Invalid graduationYear, content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+ *       401: { $ref: '#/components/responses/Unauthorized' }
+ *       403: { $ref: '#/components/responses/Forbidden' }
+ *       429: { $ref: '#/components/responses/TooManyRequests' }
+ */
+router.get(
+  "/analytics/skills-gap",
+  apiRateLimiter(),
+  requireApiKey("read:analytics"),
+  alumniController.getSkillsGap,
+);
+
+/**
+ * @swagger
+ * /api/analytics/employment-sectors:
+ *   get:
+ *     summary: Distribution of alumni across industry sectors
+ *     tags:
+ *       - Analytics
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: programme
+ *         schema: { type: string }
+ *       - in: query
+ *         name: graduationYear
+ *         schema: { type: integer }
+ *     responses:
+ *       200: { description: Alumni count per industry sector. }
+ *       401: { $ref: '#/components/responses/Unauthorized' }
+ *       403: { $ref: '#/components/responses/Forbidden' }
+ *       429: { $ref: '#/components/responses/TooManyRequests' }
+ */
+router.get(
+  "/analytics/employment-sectors",
+  apiRateLimiter(),
+  requireApiKey("read:analytics"),
+  alumniController.getEmploymentSectors,
+);
+
+/**
+ * @swagger
+ * /api/analytics/job-titles:
+ *   get:
+ *     summary: Most common current job titles
+ *     tags:
+ *       - Analytics
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: programme
+ *         schema: { type: string }
+ *       - in: query
+ *         name: graduationYear
+ *         schema: { type: integer }
+ *       - in: query
+ *         name: limit
+ *         schema: { type: integer, default: 10, maximum: 50 }
+ *     responses:
+ *       200: { description: Top job titles by count. }
+ *       401: { $ref: '#/components/responses/Unauthorized' }
+ *       403: { $ref: '#/components/responses/Forbidden' }
+ *       429: { $ref: '#/components/responses/TooManyRequests' }
+ */
+router.get(
+  "/analytics/job-titles",
+  apiRateLimiter(),
+  requireApiKey("read:analytics"),
+  alumniController.getJobTitles,
+);
+
+/**
+ * @swagger
+ * /api/analytics/employers:
+ *   get:
+ *     summary: Top employers of alumni
+ *     tags:
+ *       - Analytics
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: programme
+ *         schema: { type: string }
+ *       - in: query
+ *         name: graduationYear
+ *         schema: { type: integer }
+ *       - in: query
+ *         name: limit
+ *         schema: { type: integer, default: 10, maximum: 50 }
+ *     responses:
+ *       200: { description: Top employers by count. }
+ *       401: { $ref: '#/components/responses/Unauthorized' }
+ *       403: { $ref: '#/components/responses/Forbidden' }
+ *       429: { $ref: '#/components/responses/TooManyRequests' }
+ */
+router.get(
+  "/analytics/employers",
+  apiRateLimiter(),
+  requireApiKey("read:analytics"),
+  alumniController.getEmployers,
+);
+
+/**
+ * @swagger
+ * /api/analytics/locations:
+ *   get:
+ *     summary: Geographic distribution of alumni's current employment
+ *     tags:
+ *       - Analytics
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: programme
+ *         schema: { type: string }
+ *       - in: query
+ *         name: graduationYear
+ *         schema: { type: integer }
+ *     responses:
+ *       200: { description: Alumni count per location. }
+ *       401: { $ref: '#/components/responses/Unauthorized' }
+ *       403: { $ref: '#/components/responses/Forbidden' }
+ *       429: { $ref: '#/components/responses/TooManyRequests' }
+ */
+router.get(
+  "/analytics/locations",
+  apiRateLimiter(),
+  requireApiKey("read:analytics"),
+  alumniController.getLocations,
+);
+
+/**
+ * @swagger
+ * /api/analytics/cert-growth:
+ *   get:
+ *     summary: Certification growth over time
+ *     description: Monthly count of certifications completed, optionally windowed.
+ *     tags:
+ *       - Analytics
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: programme
+ *         schema: { type: string }
+ *       - in: query
+ *         name: graduationYear
+ *         schema: { type: integer }
+ *       - in: query
+ *         name: period
+ *         description: "6, 12, or omitted for all-time"
+ *         schema: { type: string, enum: ["6", "12"] }
+ *     responses:
+ *       200: { description: Monthly certification counts. }
+ *       401: { $ref: '#/components/responses/Unauthorized' }
+ *       403: { $ref: '#/components/responses/Forbidden' }
+ *       429: { $ref: '#/components/responses/TooManyRequests' }
+ */
+router.get(
+  "/analytics/cert-growth",
+  apiRateLimiter(),
+  requireApiKey("read:analytics"),
+  alumniController.getCertGrowth,
+);
+
+/**
+ * @swagger
+ * /api/analytics/courses:
+ *   get:
+ *     summary: Most frequently completed post-graduation courses
+ *     tags:
+ *       - Analytics
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: programme
+ *         schema: { type: string }
+ *       - in: query
+ *         name: graduationYear
+ *         schema: { type: integer }
+ *       - in: query
+ *         name: limit
+ *         schema: { type: integer, default: 10, maximum: 50 }
+ *     responses:
+ *       200: { description: Top courses by completion count. }
+ *       401: { $ref: '#/components/responses/Unauthorized' }
+ *       403: { $ref: '#/components/responses/Forbidden' }
+ *       429: { $ref: '#/components/responses/TooManyRequests' }
+ */
+router.get(
+  "/analytics/courses",
+  apiRateLimiter(),
+  requireApiKey("read:analytics"),
+  alumniController.getCourses,
+);
+
+/**
+ * @swagger
+ * /api/analytics/completion:
+ *   get:
+ *     summary: Average profile completion percentage by graduation-year cohort
+ *     tags:
+ *       - Analytics
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: programme
+ *         schema: { type: string }
+ *       - in: query
+ *         name: graduationYear
+ *         schema: { type: integer }
+ *     responses:
+ *       200: { description: Average completion percentage per cohort. }
+ *       401: { $ref: '#/components/responses/Unauthorized' }
+ *       403: { $ref: '#/components/responses/Forbidden' }
+ *       429: { $ref: '#/components/responses/TooManyRequests' }
+ */
+router.get(
+  "/analytics/completion",
+  apiRateLimiter(),
+  requireApiKey("read:analytics"),
+  alumniController.getCompletion,
+);
+
 module.exports = router;

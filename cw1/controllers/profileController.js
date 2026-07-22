@@ -64,6 +64,8 @@ function calculateCompletion(data) {
   return Math.round((completed / checks.length) * 100);
 }
 
+exports.calculateCompletion = calculateCompletion;
+
 exports.showProfile = async function (req, res, next) {
   try {
     const data = await fetchFullProfile(req.session.user.userId);

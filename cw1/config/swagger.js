@@ -10,7 +10,9 @@ const options = {
       title: "Alumni Influencers Platform API",
       version: "1.0.0",
       description:
-        "Public API for retrieving the currently featured Alumni of the Day.",
+        "Public API for retrieving the currently featured Alumni of the Day, " +
+        "Browsing the filterable alumni directory, and querying aggregated " +
+        "analytics data consumed by the university analytics dashboard.",
     },
     components: {
       securitySchemes: {
@@ -104,6 +106,32 @@ const options = {
           type: "object",
           properties: {
             error: { type: "string", example: "Invalid or revoked API key." },
+          },
+        },
+      },
+      responses: {
+        Unauthorized: {
+          description: "Missing, malformed, invalid, or revoked API key.",
+          content: {
+            "application/json": {
+              schema: { $ref: "#/components/schemas/ApiError" },
+            },
+          },
+        },
+        Forbidden: {
+          description: "The API key does not have the required scope.",
+          content: {
+            "application/json": {
+              schema: { $ref: "#/components/schemas/ApiError" },
+            },
+          },
+        },
+        TooManyRequests: {
+          description: "Too many requests - rate limit exceeded.",
+          content: {
+            "application/json": {
+              schema: { $ref: "#/components/schemas/ApiError" },
+            },
           },
         },
       },
