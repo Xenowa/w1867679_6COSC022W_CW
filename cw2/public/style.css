@@ -189,6 +189,42 @@ a:hover {
   padding: 8px 0;
   border-bottom: 1px solid #e2e2e2;
 }
+.detail-list li:has(.stat-count) {
+  display: flex;
+  justify-content: space-between;
+}
+.stat-count {
+  color: #666;
+}
+
+.stat-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+  margin-bottom: 24px;
+}
+.stat-card {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  border: 1px solid #e2e2e2;
+  border-radius: 8px;
+  padding: 20px;
+  min-width: 200px;
+}
+.stat-value {
+  font-size: 28px;
+  font-weight: 600;
+}
+.stat-value-empty {
+  font-size: 16px;
+  font-weight: 400;
+  color: #888;
+}
+.stat-label {
+  font-size: 13px;
+  color: #666;
+}
 
 /* reused by chart containers once built in J5 - shows while a chart's
    analytics fetch is in flight */

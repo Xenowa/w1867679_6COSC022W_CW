@@ -1,0 +1,49 @@
+<h1>Dashboard</h1>
+
+<div class="stat-row">
+  <div class="stat-card">
+    <span class="stat-value">{{totalAlumni}}</span>
+    <span class="stat-label">Total alumni</span>
+  </div>
+  <div class="stat-card">
+    {{#if featuredAlumnus}}
+      <span class="stat-value"><a
+          href="/alumni/{{featuredAlumnus.userId}}"
+        >{{featuredAlumnus.fullName}}</a></span>
+    {{else}}
+      <span class="stat-value stat-value-empty">None featured today</span>
+    {{/if}}
+    <span class="stat-label">Today's Alumni of the Day</span>
+  </div>
+</div>
+
+<div class="charts-grid">
+  <div class="chart-card">
+    <h2>Top job titles</h2>
+    {{#if jobTitles.length}}
+      <ul class="detail-list">
+        {{#each jobTitles}}
+          <li>{{this.jobTitle}}
+            <span class="stat-count">{{this.count}}</span></li>
+        {{/each}}
+      </ul>
+    {{else}}
+      <p class="chart-empty">No data yet.</p>
+    {{/if}}
+  </div>
+
+  <div class="chart-card">
+    <h2>Certification trends (last 6 months)</h2>
+    {{#if certGrowth.length}}
+      <ul class="detail-list">
+        {{#each certGrowth}}
+          <li>{{this.month}} <span class="stat-count">{{this.count}}</span></li>
+        {{/each}}
+      </ul>
+    {{else}}
+      <p class="chart-empty">No certifications completed in this window.</p>
+    {{/if}}
+  </div>
+</div>
+
+<p><a href="/charts">View full analytics &rarr;</a></p>

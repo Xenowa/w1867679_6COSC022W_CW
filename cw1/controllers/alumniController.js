@@ -122,7 +122,7 @@ exports.listAlumni = async function (req, res, next) {
     const where = conditions.length ? `WHERE ${conditions.join(" AND ")}` : "";
 
     const [alumni] = await pool.query(
-      `SELECT p.userId, p.fullName, pathway.programme, pathway.graduationYear,
+      `SELECT p.userId, p.fullName, p.isAlumniOfDay, pathway.programme, pathway.graduationYear,
               currentJob.company, currentJob.role, currentJob.industrySector, currentJob.location
        FROM profiles p
        LEFT JOIN ${PRIMARY_DEGREE_SUBQUERY} ON pathway.userId = p.userId
