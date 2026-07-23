@@ -103,6 +103,10 @@ hbs.registerHelper("formatDateDisplay", function (date) {
     year: "numeric",
   });
 });
+// safe to embed inside a <script> tag - escapes "<" so a value containing "</script>" can't break out of it
+hbs.registerHelper("json", function (context) {
+  return new hbs.SafeString(JSON.stringify(context).replace(/</g, "\\u003c"));
+});
 
 // serve static files
 app.use(express.static(path.join(__dirname, "public")));
@@ -111,6 +115,18 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use(require("./routes/mainRoutes"));
 app.use("/auth", require("./routes/authRoutes"));
 app.use("/alumni", require("./routes/alumniRoutes"));
+app.use(
+  "/charts",
+
+  // Relax content security policy for this route to allow inline scripts and the CDN
+  helmet.contentSecurityPolicy({
+    directives: {
+      ...helmet.contentSecurityPolicy.getDefaultDirectives(),
+      "script-src": ["'self'", "'unsafe-inline'", "https://cdn.jsdelivr.net"],
+    },
+  }),
+  require("./routes/chartsRoutes"),
+);
 
 app.use(function (err, req, res, next) {
   if (err && err.code === "EBADCSRFTOKEN") {

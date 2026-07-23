@@ -1,0 +1,57 @@
+<h1>Analytics</h1>
+
+<form action="/charts" method="get" class="filter-form" id="chartFilters">
+  <label for="programme">Programme</label>
+  <input
+    type="text"
+    id="programme"
+    name="programme"
+    value="{{filters.programme}}"
+    placeholder="e.g. BSc (Hons) Computer Science"
+  />
+
+  <label for="graduationYear">Graduation year</label>
+  <input
+    type="number"
+    id="graduationYear"
+    name="graduationYear"
+    value="{{filters.graduationYear}}"
+    placeholder="e.g. 2021"
+  />
+
+  <button type="submit">Apply filters</button>
+  <a href="/charts" class="filter-clear">Clear</a>
+</form>
+
+<div class="charts-grid">
+  <div class="chart-card">
+    <h2>Curriculum skills gap</h2>
+    <p class="chart-subtitle">Post-graduation certifications and courses, ranked
+      by completion frequency</p>
+    {{#if chartData.skillsGap.length}}
+      <div class="chart-canvas-wrap"><canvas id="skillsGapChart"></canvas></div>
+      <ul class="chart-legend-key">
+        <li><span class="legend-dot legend-critical"></span> Critical</li>
+        <li><span class="legend-dot legend-significant"></span> Significant</li>
+        <li><span class="legend-dot legend-emerging"></span> Emerging</li>
+      </ul>
+    {{else}}
+      <p class="chart-empty">No data for these filters.</p>
+    {{/if}}
+  </div>
+
+  <div class="chart-card">
+    <h2>Employment by industry sector</h2>
+    {{#if chartData.employmentSectors.length}}
+      <div class="chart-canvas-wrap"><canvas
+          id="employmentSectorsChart"
+        ></canvas></div>
+    {{else}}
+      <p class="chart-empty">No data for these filters.</p>
+    {{/if}}
+  </div>
+</div>
+
+<script>const chartData = {{{json chartData}}};</script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+<script src="/charts.js"></script>
