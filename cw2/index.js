@@ -13,6 +13,7 @@ const session = require("express-session");
 const methodOverride = require("method-override");
 const helmet = require("helmet");
 const hbs = require("hbs");
+const { ApiClientError } = require("./services/apiClient");
 
 const app = (module.exports = express());
 
@@ -116,6 +117,19 @@ app.use(function (err, req, res, next) {
       "Your session expired or the form was tampered with. Please try again.",
     );
     return res.redirect(req.get("Referrer") || "/");
+  }
+
+  if (err instanceof ApiClientError) {
+    // log it
+    if (!module.parent) console.error(err.stack);
+
+    const friendlyMessage =
+      err.status === 401 || err.status === 403
+        ? "The dashboard's connection to the student platform isn't authorized. Contact the developer to check the API key."
+        : "The student platform is temporarily unavailable. Please try again shortly.";
+    return res
+      .status(err.status >= 400 && err.status < 600 ? err.status : 502)
+      .render("api-error", { message: friendlyMessage });
   }
 
   // log it
