@@ -4,6 +4,7 @@
   <thead>
     <tr>
       <th>Label</th>
+      <th>Scopes</th>
       <th>Created</th>
       <th>Status</th>
       <th></th>
@@ -13,6 +14,7 @@
     {{#each keys}}
       <tr>
         <td>{{this.label}}</td>
+        <td>{{#each this.scopes}}{{this}}{{#unless @last}}, {{/unless}}{{/each}}</td>
         <td>{{formatDateDisplay this.createdAt}}</td>
         <td>{{#if this.revokedAt}}Revoked{{else}}Active{{/if}}</td>
         <td>
@@ -26,7 +28,7 @@
         </td>
       </tr>
     {{else}}
-      <tr><td colspan="4">No API keys yet.</td></tr>
+      <tr><td colspan="5">No API keys yet.</td></tr>
     {{/each}}
   </tbody>
 </table>
@@ -38,6 +40,14 @@
 
     <label>Label (optional)</label>
     <input type="text" name="label" placeholder="e.g. AR App Production Key">
+
+    <label>Scopes</label>
+    {{#each allowedScopes}}
+      <label class="checkbox-option">
+        <input type="checkbox" name="scopes" value="{{this}}">
+        {{this}}
+      </label>
+    {{/each}}
 
     <button type="submit">Generate key</button>
   </form>

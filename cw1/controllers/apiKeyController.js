@@ -3,8 +3,8 @@
 const pool = require("../config/db");
 const tokenService = require("../services/tokenService");
 
-// Scoping the API Key for the alumni-of-the-day endpoint
-const DEFAULT_SCOPES = ["read:alumni_of_day"];
+// every scope a client application can be issued - kept as an allowlist
+const ALLOWED_SCOPES = ["read:alumni_of_day", "read:alumni", "read:analytics"];
 
 exports.listKeys = async function (req, res, next) {
   try {
@@ -12,7 +12,7 @@ exports.listKeys = async function (req, res, next) {
       "SELECT keyId, label, scopes, revokedAt, createdAt FROM api_keys WHERE userId = ? ORDER BY createdAt DESC",
       [req.session.user.userId],
     );
-    res.render("keys/index", { keys });
+    res.render("keys/index", { keys, allowedScopes: ALLOWED_SCOPES });
   } catch (err) {
     next(err);
   }
@@ -20,6 +20,15 @@ exports.listKeys = async function (req, res, next) {
 
 exports.generateKey = async function (req, res, next) {
   const label = (req.body.label || "").trim();
+  const requestedScopes = [].concat(req.body.scopes || []);
+  const scopes = ALLOWED_SCOPES.filter((scope) =>
+    requestedScopes.includes(scope),
+  );
+
+  if (!scopes.length) {
+    res.message("Select at least one scope for the key.");
+    return res.redirect("/keys");
+  }
 
   try {
     const rawKey = tokenService.generateRawToken();
@@ -27,12 +36,7 @@ exports.generateKey = async function (req, res, next) {
 
     await pool.query(
       "INSERT INTO api_keys (userId, keyHash, label, scopes) VALUES (?, ?, ?, ?)",
-      [
-        req.session.user.userId,
-        keyHash,
-        label || null,
-        JSON.stringify(DEFAULT_SCOPES),
-      ],
+      [req.session.user.userId, keyHash, label || null, JSON.stringify(scopes)],
     );
 
     // shown once - the raw key is never persisted anywhere, only its hash
