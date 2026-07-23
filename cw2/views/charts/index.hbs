@@ -96,6 +96,33 @@
       <p class="chart-empty">No data for these filters.</p>
     {{/if}}
   </div>
+
+  <div class="chart-card">
+    <h2>Geographic distribution</h2>
+    {{#if chartData.locations.length}}
+      <div class="chart-canvas-wrap"><canvas id="locationsChart"></canvas></div>
+    {{else}}
+      <p class="chart-empty">No data for these filters.</p>
+    {{/if}}
+  </div>
+
+  <div class="chart-card">
+    <div class="chart-card-header">
+      <h2>Certification growth over time</h2>
+      <label for="certGrowthPeriod">
+        <select id="certGrowthPeriod" name="certGrowthPeriod" form="chartFilters">
+          <option value="6" {{#if (eq filters.certGrowthPeriod "6")}}selected{{/if}}>Last 6 months</option>
+          <option value="12" {{#if (eq filters.certGrowthPeriod "12")}}selected{{/if}}>Last 12 months</option>
+          <option value="all" {{#if (eq filters.certGrowthPeriod "all")}}selected{{/if}}>All time</option>
+        </select>
+      </label>
+    </div>
+    {{#if chartData.certGrowth.length}}
+      <div class="chart-canvas-wrap"><canvas id="certGrowthChart"></canvas></div>
+    {{else}}
+      <p class="chart-empty">No data for these filters.</p>
+    {{/if}}
+  </div>
 </div>
 
 <script>const chartData = {{{json chartData}}};</script>

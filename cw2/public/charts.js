@@ -142,3 +142,70 @@ if (chartData.employers.length) {
     },
   });
 }
+
+if (chartData.locations.length) {
+  new Chart(document.getElementById("locationsChart"), {
+    type: "bar",
+    data: {
+      labels: chartData.locations.map(function (d) {
+        return d.location;
+      }),
+      datasets: [
+        {
+          label: "Alumni",
+          data: chartData.locations.map(function (d) {
+            return d.count;
+          }),
+          backgroundColor: "#5aa876",
+        },
+      ],
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { title: { display: true, text: "Location" } },
+        y: {
+          title: { display: true, text: "Alumni" },
+          ticks: { precision: 0 },
+        },
+      },
+    },
+  });
+}
+
+if (chartData.certGrowth.length) {
+  new Chart(document.getElementById("certGrowthChart"), {
+    type: "line",
+    data: {
+      labels: chartData.certGrowth.map(function (d) {
+        return d.month;
+      }),
+      datasets: [
+        {
+          label: "Certifications completed",
+          data: chartData.certGrowth.map(function (d) {
+            return d.count;
+          }),
+          borderColor: "#107aff",
+          backgroundColor: "#107aff",
+          tension: 0.3,
+          fill: false,
+        },
+      ],
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { title: { display: true, text: "Month" } },
+        y: {
+          title: { display: true, text: "Certifications" },
+          ticks: { precision: 0 },
+        },
+      },
+    },
+  });
+}
