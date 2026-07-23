@@ -32,51 +32,76 @@ function buildPathwayFilter(query) {
   return { conditions, params };
 }
 
+// full-profile shape selected by the different where clause
+async function fetchAlumnusDetail(whereClause, whereParam) {
+  const [[profile]] = await pool.query(
+    `SELECT userId, fullName, bio, linkedinUrl, profileImage FROM profiles WHERE ${whereClause} LIMIT 1`,
+    [whereParam],
+  );
+  if (!profile) return null;
+
+  const [degrees] = await pool.query(
+    "SELECT title, institution, url, completedAt FROM degrees WHERE userId = ? ORDER BY completedAt DESC",
+    [profile.userId],
+  );
+  const [certifications] = await pool.query(
+    "SELECT title, institution, url, completedAt FROM certifications WHERE userId = ? ORDER BY completedAt DESC",
+    [profile.userId],
+  );
+  const [licences] = await pool.query(
+    "SELECT title, institution, url, completedAt FROM licences WHERE userId = ? ORDER BY completedAt DESC",
+    [profile.userId],
+  );
+  const [courses] = await pool.query(
+    "SELECT title, institution, url, completedAt FROM professional_courses WHERE userId = ? ORDER BY completedAt DESC",
+    [profile.userId],
+  );
+  const [employment] = await pool.query(
+    "SELECT company, role, industrySector, location, startedAt, endedAt FROM employment_history WHERE userId = ? ORDER BY startedAt DESC",
+    [profile.userId],
+  );
+
+  return {
+    fullName: profile.fullName,
+    bio: profile.bio,
+    linkedinUrl: profile.linkedinUrl,
+    profileImage: profile.profileImage,
+    degrees,
+    certifications,
+    licences,
+    courses,
+    employment,
+  };
+}
+
 // endpoint to expose alumnus of the day related details
 exports.getTodaysAlumnus = async function (req, res, next) {
   try {
-    const [[profile]] = await pool.query(
-      "SELECT userId, fullName, bio, linkedinUrl, profileImage FROM profiles WHERE isAlumniOfDay = TRUE LIMIT 1",
-    );
-
-    if (!profile) {
+    const alumnus = await fetchAlumnusDetail("isAlumniOfDay = TRUE", true);
+    if (!alumnus) {
       return res
         .status(404)
         .json({ error: "No alumnus is currently featured." });
     }
+    res.json(alumnus);
+  } catch (err) {
+    next(err);
+  }
+};
 
-    const [degrees] = await pool.query(
-      "SELECT title, institution, url, completedAt FROM degrees WHERE userId = ? ORDER BY completedAt DESC",
-      [profile.userId],
-    );
-    const [certifications] = await pool.query(
-      "SELECT title, institution, url, completedAt FROM certifications WHERE userId = ? ORDER BY completedAt DESC",
-      [profile.userId],
-    );
-    const [licences] = await pool.query(
-      "SELECT title, institution, url, completedAt FROM licences WHERE userId = ? ORDER BY completedAt DESC",
-      [profile.userId],
-    );
-    const [courses] = await pool.query(
-      "SELECT title, institution, url, completedAt FROM professional_courses WHERE userId = ? ORDER BY completedAt DESC",
-      [profile.userId],
-    );
-    const [employment] = await pool.query(
-      "SELECT company, role, industrySector, location, startedAt, endedAt FROM employment_history WHERE userId = ? ORDER BY startedAt DESC",
-      [profile.userId],
-    );
+// full profile detail for a single alumnus, backs the dashboard's detail view
+exports.getAlumnusById = async function (req, res, next) {
+  const userId = Number(req.params.id);
+  if (!Number.isInteger(userId)) {
+    return res.status(400).json({ error: "Invalid alumnus id." });
+  }
 
-    res.json({
-      fullName: profile.fullName,
-      bio: profile.bio,
-      linkedinUrl: profile.linkedinUrl,
-      profileImage: profile.profileImage,
-      degrees,
-      certifications,
-      licences,
-      courses,
-      employment,
-    });
+  try {
+    const alumnus = await fetchAlumnusDetail("userId = ?", userId);
+    if (!alumnus) {
+      return res.status(404).json({ error: "Alumnus not found." });
+    }
+    res.json(alumnus);
   } catch (err) {
     next(err);
   }

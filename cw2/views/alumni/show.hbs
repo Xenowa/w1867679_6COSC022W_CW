@@ -1,0 +1,90 @@
+<p><a href="/alumni">&larr; Back to directory</a></p>
+
+<h1>{{alumnus.fullName}}</h1>
+{{#if alumnus.bio}}<p>{{alumnus.bio}}</p>{{/if}}
+{{#if alumnus.linkedinUrl}}<p><a
+      href="{{alumnus.linkedinUrl}}"
+    >{{alumnus.linkedinUrl}}</a></p>{{/if}}
+
+<div class="detail-section">
+  <h2>Employment history</h2>
+  <ul class="detail-list">
+    {{#each alumnus.employment}}
+      <li>
+        <strong>{{this.role}}</strong>
+        at
+        {{this.company}}
+        {{#if this.industrySector}} &middot; {{this.industrySector}}{{/if}}
+        {{#if this.location}} &middot; {{this.location}}{{/if}}
+        <br />
+        {{formatDateDisplay this.startedAt}}
+        &ndash;
+        {{#if this.endedAt}}{{formatDateDisplay
+            this.endedAt
+          }}{{else}}Present{{/if}}
+      </li>
+    {{else}}
+      <li>No employment history recorded.</li>
+    {{/each}}
+  </ul>
+</div>
+
+<div class="detail-section">
+  <h2>Degrees</h2>
+  <ul class="detail-list">
+    {{#each alumnus.degrees}}
+      <li>{{this.title}}
+        &middot;
+        {{this.institution}}
+        &middot;
+        {{formatDateDisplay this.completedAt}}</li>
+    {{else}}
+      <li>None recorded.</li>
+    {{/each}}
+  </ul>
+</div>
+
+<div class="detail-section">
+  <h2>Certifications</h2>
+  <ul class="detail-list">
+    {{#each alumnus.certifications}}
+      <li>{{this.title}}
+        &middot;
+        {{this.institution}}
+        &middot;
+        {{formatDateDisplay this.completedAt}}</li>
+    {{else}}
+      <li>None recorded.</li>
+    {{/each}}
+  </ul>
+</div>
+
+<div class="detail-section">
+  <h2>Licences</h2>
+  <ul class="detail-list">
+    {{#each alumnus.licences}}
+      <li>{{this.title}}
+        &middot;
+        {{this.institution}}
+        &middot;
+        {{formatDateDisplay this.completedAt}}</li>
+    {{else}}
+      <li>None recorded.</li>
+    {{/each}}
+  </ul>
+</div>
+
+<div class="detail-section">
+  <h2>Professional courses</h2>
+  <ul class="detail-list">
+    {{#each alumnus.courses}}
+      <li>{{this.title}}
+        &middot;
+        {{this.institution}}
+        &middot;
+        {{formatDateDisplay this.completedAt}}</li>
+    {{else}}
+      <li>None recorded.</li>
+    {{/each}}
+  </ul>
+</div>

@@ -43,6 +43,7 @@ async function request(path, params = {}) {
 module.exports = {
   ApiClientError,
   getAlumni: (filters) => request("/alumni", filters),
+  getAlumnusById: (id) => request(`/alumni/${encodeURIComponent(id)}`),
   getSkillsGap: (filters) => request("/analytics/skills-gap", filters),
   getEmploymentSectors: (filters) =>
     request("/analytics/employment-sectors", filters),

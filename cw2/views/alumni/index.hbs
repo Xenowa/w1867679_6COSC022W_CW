@@ -1,0 +1,60 @@
+<h1>Alumni directory</h1>
+
+<form action="/alumni" method="get" class="filter-form">
+  <label for="programme">Programme</label>
+  <input
+    type="text"
+    id="programme"
+    name="programme"
+    value="{{filters.programme}}"
+    placeholder="e.g. BSc (Hons) Computer Science"
+  />
+
+  <label for="graduationYear">Graduation year</label>
+  <input
+    type="number"
+    id="graduationYear"
+    name="graduationYear"
+    value="{{filters.graduationYear}}"
+    placeholder="e.g. 2021"
+  />
+
+  <label for="industrySector">Industry sector</label>
+  <input
+    type="text"
+    id="industrySector"
+    name="industrySector"
+    value="{{filters.industrySector}}"
+    placeholder="e.g. Software Engineering"
+  />
+
+  <button type="submit">Filter</button>
+  <a href="/alumni" class="filter-clear">Clear</a>
+</form>
+
+<table class="data-table">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Programme</th>
+      <th>Graduation year</th>
+      <th>Current role</th>
+      <th>Sector</th>
+      <th>Location</th>
+    </tr>
+  </thead>
+  <tbody>
+    {{#each alumni}}
+      <tr>
+        <td><a href="/alumni/{{this.userId}}">{{this.fullName}}</a></td>
+        <td>{{this.programme}}</td>
+        <td>{{this.graduationYear}}</td>
+        <td>{{#if this.role}}{{this.role}} at {{this.company}}{{/if}}</td>
+        <td>{{this.industrySector}}</td>
+        <td>{{this.location}}</td>
+      </tr>
+    {{else}}
+      <tr><td colspan="6">No alumni match those filters.</td></tr>
+    {{/each}}
+  </tbody>
+</table>

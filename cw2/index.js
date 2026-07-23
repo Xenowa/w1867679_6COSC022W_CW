@@ -110,6 +110,7 @@ app.use(express.static(path.join(__dirname, "public")));
 // routes
 app.use(require("./routes/mainRoutes"));
 app.use("/auth", require("./routes/authRoutes"));
+app.use("/alumni", require("./routes/alumniRoutes"));
 
 app.use(function (err, req, res, next) {
   if (err && err.code === "EBADCSRFTOKEN") {

@@ -123,6 +123,73 @@ a:hover {
   background: #0862d1;
 }
 
+.filter-form {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+.filter-form label {
+  display: block;
+  font-weight: 600;
+  font-size: 14px;
+  margin-bottom: 4px;
+}
+.filter-form input {
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font: inherit;
+}
+.filter-form button {
+  padding: 9px 16px;
+  border: none;
+  border-radius: 4px;
+  background: #107aff;
+  color: white;
+  font: inherit;
+  cursor: pointer;
+}
+.filter-form button:hover {
+  background: #0862d1;
+}
+.filter-clear {
+  padding: 9px 4px;
+  font-size: 14px;
+}
+
+.data-table {
+  border-collapse: collapse;
+  width: 100%;
+}
+.data-table th,
+.data-table td {
+  text-align: left;
+  padding: 8px 12px;
+  border-bottom: 1px solid #e2e2e2;
+}
+.data-table th {
+  font-weight: 600;
+}
+
+.detail-section {
+  margin-top: 24px;
+}
+.detail-section h2 {
+  font-size: 18px;
+  margin-bottom: 8px;
+}
+.detail-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.detail-list li {
+  padding: 8px 0;
+  border-bottom: 1px solid #e2e2e2;
+}
+
 /* reused by chart containers once built in J5 - shows while a chart's
    analytics fetch is in flight */
 .chart-loading {

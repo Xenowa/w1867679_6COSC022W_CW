@@ -104,6 +104,54 @@ router.get(
 
 /**
  * @swagger
+ * /api/alumni/{id}:
+ *   get:
+ *     summary: Full profile detail for a single alumnus
+ *     description: >
+ *       Returns the same full-profile shape as /api/alumni/today (degrees,
+ *       certifications, licences, courses, employment) for an arbitrary
+ *       alumnus. Consumed by the analytics dashboard's alumni detail view.
+ *     tags:
+ *       - Public API
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema: { type: integer }
+ *     responses:
+ *       200:
+ *         description: The alumnus's full public profile.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/AlumniOfTheDay'
+ *       400:
+ *         description: Invalid alumnus id.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ApiError'
+ *       401: { $ref: '#/components/responses/Unauthorized' }
+ *       403: { $ref: '#/components/responses/Forbidden' }
+ *       404:
+ *         description: No alumnus with that id.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ApiError'
+ *       429: { $ref: '#/components/responses/TooManyRequests' }
+ */
+router.get(
+  "/alumni/:id",
+  apiRateLimiter(),
+  requireApiKey("read:alumni"),
+  alumniController.getAlumnusById,
+);
+
+/**
+ * @swagger
  * /api/analytics/skills-gap:
  *   get:
  *     summary: Curriculum skills gap (frequency proxy)
