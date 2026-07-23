@@ -23,6 +23,54 @@
   <a href="/charts" class="filter-clear">Clear</a>
 </form>
 
+<div class="export-bar">
+  <form action="/export/alumni.csv" method="get" class="inline-form">
+    <input type="hidden" name="programme" value="{{filters.programme}}">
+    <input type="hidden" name="graduationYear" value="{{filters.graduationYear}}">
+    <button type="submit">Export alumni CSV</button>
+  </form>
+  <form action="/export/chart-data.csv" method="get" class="inline-form">
+    <input type="hidden" name="programme" value="{{filters.programme}}">
+    <input type="hidden" name="graduationYear" value="{{filters.graduationYear}}">
+    <input type="hidden" name="jobTitlesLimit" value="{{filters.jobTitlesLimit}}">
+    <input type="hidden" name="employersLimit" value="{{filters.employersLimit}}">
+    <input type="hidden" name="certGrowthPeriod" value="{{filters.certGrowthPeriod}}">
+    <button type="submit">Export chart data CSV</button>
+  </form>
+  <button type="button" id="generatePdfButton">Generate PDF</button>
+</div>
+
+<details class="credential-add presets-bar">
+  <summary>Filter presets</summary>
+  {{#if presets.length}}
+    <ul class="preset-list">
+      {{#each presets}}
+        <li>
+          <a href="/charts/presets/{{this.id}}/apply">{{this.name}}</a>
+          <form action="/charts/presets/{{this.id}}?_method=DELETE" method="post" class="inline-form">
+            <input type="hidden" name="_csrf" value="{{../csrfToken}}">
+            <button type="submit" class="delete-button">Delete</button>
+          </form>
+        </li>
+      {{/each}}
+    </ul>
+  {{else}}
+    <p>No saved presets yet.</p>
+  {{/if}}
+
+  <form action="/charts/presets" method="post" class="auth-form">
+    <input type="hidden" name="_csrf" value="{{csrfToken}}">
+    <input type="hidden" name="programme" value="{{filters.programme}}">
+    <input type="hidden" name="graduationYear" value="{{filters.graduationYear}}">
+    <input type="hidden" name="jobTitlesLimit" value="{{filters.jobTitlesLimit}}">
+    <input type="hidden" name="employersLimit" value="{{filters.employersLimit}}">
+    <input type="hidden" name="certGrowthPeriod" value="{{filters.certGrowthPeriod}}">
+    <label for="presetName">Save current filters as</label>
+    <input type="text" id="presetName" name="name" placeholder="e.g. 2021 Cohort" required>
+    <button type="submit">Save preset</button>
+  </form>
+</details>
+
 <div class="charts-grid">
   <div class="chart-card">
     <h2>Curriculum skills gap</h2>
@@ -35,6 +83,7 @@
         <li><span class="legend-dot legend-significant"></span> Significant</li>
         <li><span class="legend-dot legend-emerging"></span> Emerging</li>
       </ul>
+      <button type="button" class="download-png-button" data-download-chart="skillsGap">Download PNG</button>
     {{else}}
       <p class="chart-empty">No data for these filters.</p>
     {{/if}}
@@ -46,6 +95,7 @@
       <div class="chart-canvas-wrap"><canvas
           id="employmentSectorsChart"
         ></canvas></div>
+      <button type="button" class="download-png-button" data-download-chart="employmentSectors">Download PNG</button>
     {{else}}
       <p class="chart-empty">No data for these filters.</p>
     {{/if}}
@@ -69,6 +119,7 @@
     </div>
     {{#if chartData.jobTitles.length}}
       <div class="chart-canvas-wrap"><canvas id="jobTitlesChart"></canvas></div>
+      <button type="button" class="download-png-button" data-download-chart="jobTitles">Download PNG</button>
     {{else}}
       <p class="chart-empty">No data for these filters.</p>
     {{/if}}
@@ -92,6 +143,7 @@
     </div>
     {{#if chartData.employers.length}}
       <div class="chart-canvas-wrap"><canvas id="employersChart"></canvas></div>
+      <button type="button" class="download-png-button" data-download-chart="employers">Download PNG</button>
     {{else}}
       <p class="chart-empty">No data for these filters.</p>
     {{/if}}
@@ -101,6 +153,7 @@
     <h2>Geographic distribution</h2>
     {{#if chartData.locations.length}}
       <div class="chart-canvas-wrap"><canvas id="locationsChart"></canvas></div>
+      <button type="button" class="download-png-button" data-download-chart="locations">Download PNG</button>
     {{else}}
       <p class="chart-empty">No data for these filters.</p>
     {{/if}}
@@ -119,6 +172,7 @@
     </div>
     {{#if chartData.certGrowth.length}}
       <div class="chart-canvas-wrap"><canvas id="certGrowthChart"></canvas></div>
+      <button type="button" class="download-png-button" data-download-chart="certGrowth">Download PNG</button>
     {{else}}
       <p class="chart-empty">No data for these filters.</p>
     {{/if}}
@@ -128,6 +182,7 @@
     <h2>Post-graduation course completions</h2>
     {{#if chartData.courses.length}}
       <div class="chart-canvas-wrap"><canvas id="coursesChart"></canvas></div>
+      <button type="button" class="download-png-button" data-download-chart="courses">Download PNG</button>
     {{else}}
       <p class="chart-empty">No data for these filters.</p>
     {{/if}}
@@ -138,6 +193,7 @@
     <p class="chart-subtitle">Average profile completion percentage, grouped by graduation year</p>
     {{#if chartData.completion.length}}
       <div class="chart-canvas-wrap"><canvas id="completionChart"></canvas></div>
+      <button type="button" class="download-png-button" data-download-chart="completion">Download PNG</button>
     {{else}}
       <p class="chart-empty">No data for these filters.</p>
     {{/if}}

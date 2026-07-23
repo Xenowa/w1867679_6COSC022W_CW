@@ -1,20 +1,23 @@
 "use strict";
 
 document.getElementById("chartFilters").addEventListener("submit", function () {
-  var btn = this.querySelector('button[type="submit"]');
+  let btn = this.querySelector('button[type="submit"]');
   btn.disabled = true;
   btn.textContent = "Loading...";
 });
 
-var SEVERITY_COLORS = {
+let SEVERITY_COLORS = {
   critical: "#d64545",
   significant: "#e2a33d",
   emerging: "#4a90d9",
 };
 
+// keeps a reference to each Chart.js instance so the download-PNG buttons
+// can call .toBase64Image() on demand
+let charts = {};
+
 if (chartData.skillsGap.length) {
-  // Loaded from the cdn script
-  new Chart(document.getElementById("skillsGapChart"), {
+  charts.skillsGap = new Chart(document.getElementById("skillsGapChart"), {
     type: "bar",
     data: {
       labels: chartData.skillsGap.map(function (d) {
@@ -55,32 +58,35 @@ if (chartData.skillsGap.length) {
 }
 
 if (chartData.employmentSectors.length) {
-  new Chart(document.getElementById("employmentSectorsChart"), {
-    type: "doughnut",
-    data: {
-      labels: chartData.employmentSectors.map(function (d) {
-        return d.sector;
-      }),
-      datasets: [
-        {
-          data: chartData.employmentSectors.map(function (d) {
-            return d.count;
-          }),
+  charts.employmentSectors = new Chart(
+    document.getElementById("employmentSectorsChart"),
+    {
+      type: "doughnut",
+      data: {
+        labels: chartData.employmentSectors.map(function (d) {
+          return d.sector;
+        }),
+        datasets: [
+          {
+            data: chartData.employmentSectors.map(function (d) {
+              return d.count;
+            }),
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: true, position: "right" },
         },
-      ],
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: {
-        legend: { display: true, position: "right" },
       },
     },
-  });
+  );
 }
 
 if (chartData.jobTitles.length) {
-  new Chart(document.getElementById("jobTitlesChart"), {
+  charts.jobTitles = new Chart(document.getElementById("jobTitlesChart"), {
     type: "bar",
     data: {
       labels: chartData.jobTitles.map(function (d) {
@@ -112,7 +118,7 @@ if (chartData.jobTitles.length) {
 }
 
 if (chartData.employers.length) {
-  new Chart(document.getElementById("employersChart"), {
+  charts.employers = new Chart(document.getElementById("employersChart"), {
     type: "bar",
     data: {
       labels: chartData.employers.map(function (d) {
@@ -144,7 +150,7 @@ if (chartData.employers.length) {
 }
 
 if (chartData.locations.length) {
-  new Chart(document.getElementById("locationsChart"), {
+  charts.locations = new Chart(document.getElementById("locationsChart"), {
     type: "bar",
     data: {
       labels: chartData.locations.map(function (d) {
@@ -176,7 +182,7 @@ if (chartData.locations.length) {
 }
 
 if (chartData.certGrowth.length) {
-  new Chart(document.getElementById("certGrowthChart"), {
+  charts.certGrowth = new Chart(document.getElementById("certGrowthChart"), {
     type: "line",
     data: {
       labels: chartData.certGrowth.map(function (d) {
@@ -211,7 +217,7 @@ if (chartData.certGrowth.length) {
 }
 
 if (chartData.courses.length) {
-  new Chart(document.getElementById("coursesChart"), {
+  charts.courses = new Chart(document.getElementById("coursesChart"), {
     type: "pie",
     data: {
       labels: chartData.courses.map(function (d) {
@@ -234,7 +240,7 @@ if (chartData.courses.length) {
 }
 
 if (chartData.completion.length) {
-  new Chart(document.getElementById("completionChart"), {
+  charts.completion = new Chart(document.getElementById("completionChart"), {
     type: "bar",
     data: {
       labels: chartData.completion.map(function (d) {
@@ -265,7 +271,7 @@ if (chartData.completion.length) {
         tooltip: {
           callbacks: {
             afterBody: function (items) {
-              var d = chartData.completion[items[0].dataIndex];
+              let d = chartData.completion[items[0].dataIndex];
               return d.alumniCount + " alumni in this cohort";
             },
           },
@@ -281,5 +287,30 @@ if (chartData.completion.length) {
         },
       },
     },
+  });
+}
+
+document
+  .querySelector(".charts-grid")
+  .addEventListener("click", function (event) {
+    let button = event.target.closest("[data-download-chart]");
+    if (!button) return;
+
+    let name = button.getAttribute("data-download-chart");
+    let chart = charts[name];
+    if (!chart) return;
+
+    let link = document.createElement("a");
+    link.href = chart.toBase64Image();
+    link.download = name + ".png";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  });
+
+let pdfButton = document.getElementById("generatePdfButton");
+if (pdfButton) {
+  pdfButton.addEventListener("click", function () {
+    window.print();
   });
 }

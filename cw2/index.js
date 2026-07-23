@@ -127,6 +127,7 @@ app.use(
   }),
   require("./routes/chartsRoutes"),
 );
+app.use("/export", require("./routes/exportRoutes"));
 
 app.use(function (err, req, res, next) {
   if (err && err.code === "EBADCSRFTOKEN") {

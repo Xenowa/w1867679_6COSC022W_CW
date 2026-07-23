@@ -284,3 +284,121 @@ a:hover {
 .legend-emerging {
   background: #4a90d9;
 }
+
+.inline-form {
+  display: inline;
+  margin-left: 8px;
+}
+
+.export-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+.export-bar button {
+  padding: 8px 14px;
+  border: 1px solid #107aff;
+  border-radius: 4px;
+  background: white;
+  color: #107aff;
+  cursor: pointer;
+  font: inherit;
+}
+.export-bar button:hover {
+  background: #eef3fb;
+}
+
+.credential-add {
+  border: 1px dashed #c7c7c7;
+  border-radius: 6px;
+  background: transparent;
+  margin-bottom: 24px;
+}
+.credential-add[open] {
+  border-style: solid;
+  border-color: #107aff;
+}
+.credential-add summary {
+  list-style: none;
+  cursor: pointer;
+  padding: 10px 16px;
+  color: #107aff;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.credential-add summary::-webkit-details-marker {
+  display: none;
+}
+.credential-add summary::before {
+  content: "+";
+  font-size: 16px;
+  line-height: 1;
+}
+.credential-add .auth-form {
+  max-width: 480px;
+  padding: 0 16px 16px;
+}
+
+.preset-list {
+  list-style: none;
+  margin: 0;
+  padding: 0 16px;
+}
+.preset-list li {
+  display: flex;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid #e2e2e2;
+}
+
+.delete-button {
+  padding: 6px 12px;
+  border: 1px solid #a3231f;
+  border-radius: 4px;
+  background: white;
+  color: #a3231f;
+  cursor: pointer;
+  font: inherit;
+}
+.delete-button:hover {
+  background: #fdecec;
+}
+
+.download-png-button {
+  margin-top: 12px;
+  padding: 6px 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background: white;
+  color: #1a1a1a;
+  cursor: pointer;
+  font: inherit;
+  font-size: 13px;
+}
+.download-png-button:hover {
+  background: #f5f5f5;
+}
+
+@media print {
+  .sidebar,
+  .filter-form,
+  .export-bar,
+  .presets-bar,
+  .download-png-button,
+  .n-input,
+  .chart-card-header select {
+    display: none !important;
+  }
+  .content {
+    padding: 0;
+  }
+  .charts-grid {
+    grid-template-columns: 1fr;
+  }
+  .chart-card {
+    break-inside: avoid;
+  }
+}

@@ -1,6 +1,7 @@
 "use strict";
 
 const apiClient = require("../services/apiClient");
+const { listPresets } = require("./presetController");
 
 exports.showCharts = async function (req, res, next) {
   const filters = {
@@ -24,6 +25,7 @@ exports.showCharts = async function (req, res, next) {
       certGrowth,
       courses,
       completion,
+      presets,
     ] = await Promise.all([
       apiClient.getSkillsGap(filters),
       apiClient.getEmploymentSectors(filters),
@@ -36,6 +38,7 @@ exports.showCharts = async function (req, res, next) {
       }),
       apiClient.getCourses(filters),
       apiClient.getCompletion(filters),
+      listPresets(req.session.admin.id),
     ]);
 
     res.render("charts/index", {
@@ -45,6 +48,7 @@ exports.showCharts = async function (req, res, next) {
         employersLimit,
         certGrowthPeriod,
       },
+      presets,
       chartData: {
         skillsGap: skillsGap.skillsGap,
         employmentSectors: employmentSectors.employmentSectors,

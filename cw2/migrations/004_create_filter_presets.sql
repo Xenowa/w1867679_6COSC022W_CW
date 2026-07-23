@@ -1,0 +1,8 @@
+CREATE TABLE IF NOT EXISTS filter_presets (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  adminUserId INT NOT NULL,
+  name VARCHAR(255) NOT NULL,
+  filters JSON NOT NULL,
+  createdAt DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT fk_filter_presets_admin_user FOREIGN KEY (adminUserId) REFERENCES admin_users(id) ON DELETE CASCADE
+) ENGINE=InnoDB;
