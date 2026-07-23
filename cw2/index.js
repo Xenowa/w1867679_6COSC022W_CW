@@ -66,10 +66,9 @@ app.use(function (req, res, next) {
   // populated once admin auth exists, sidebar partial reads this
   res.locals.admin = req.session.admin || null;
 
-  next();
-  // empty or "flush" the messages so they
-  // don't build up
+  // flush the queue
   req.session.messages = [];
+  next();
 });
 
 // allow overriding methods in query (?_method=put)
@@ -109,6 +108,7 @@ app.use(express.static(path.join(__dirname, "public")));
 
 // routes
 app.use(require("./routes/mainRoutes"));
+app.use("/auth", require("./routes/authRoutes"));
 
 app.use(function (err, req, res, next) {
   if (err && err.code === "EBADCSRFTOKEN") {

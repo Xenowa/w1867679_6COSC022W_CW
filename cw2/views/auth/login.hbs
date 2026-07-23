@@ -1,0 +1,24 @@
+<h1>Login</h1>
+
+{{#if errors}}
+  <div class="form-errors">
+    <ul>
+      {{#each errors}}<li>{{this}}</li>{{/each}}
+    </ul>
+  </div>
+{{/if}}
+
+<form action="/auth/login" method="post" class="auth-form">
+  <input type="hidden" name="_csrf" value="{{csrfToken}}" />
+
+  <label for="email">Email</label>
+  <input type="email" id="email" name="email" value="{{email}}" required />
+
+  <label for="password">Password</label>
+  <input type="password" id="password" name="password" required />
+
+  <button type="submit">Log in</button>
+</form>
+
+<p><a href="/auth/forgot-password">Forgot your password?</a></p>
+<p>Don't have an account? <a href="/auth/register">Register</a></p>
