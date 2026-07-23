@@ -1,0 +1,22 @@
+<aside class="sidebar">
+  <a class="sidebar-brand" href="/">Analytics Dashboard</a>
+  {{#if admin}}
+    <nav class="sidebar-nav">
+      <a href="/dashboard">Dashboard</a>
+      <a href="/alumni">Alumni</a>
+      <a href="/charts">Charts</a>
+    </nav>
+  {{/if}}
+  <div class="sidebar-footer">
+    {{#if admin}}
+      <span class="sidebar-user">{{admin.email}}</span>
+      <form action="/auth/logout" method="post">
+        <input type="hidden" name="_csrf" value="{{csrfToken}}" />
+        <button type="submit">Logout</button>
+      </form>
+    {{else}}
+      <a href="/auth/login">Login</a>
+      <a href="/auth/register">Register</a>
+    {{/if}}
+  </div>
+</aside>
