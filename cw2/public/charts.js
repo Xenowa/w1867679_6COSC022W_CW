@@ -209,3 +209,77 @@ if (chartData.certGrowth.length) {
     },
   });
 }
+
+if (chartData.courses.length) {
+  new Chart(document.getElementById("coursesChart"), {
+    type: "pie",
+    data: {
+      labels: chartData.courses.map(function (d) {
+        return d.course;
+      }),
+      datasets: [
+        {
+          data: chartData.courses.map(function (d) {
+            return d.count;
+          }),
+        },
+      ],
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { legend: { display: true, position: "right" } },
+    },
+  });
+}
+
+if (chartData.completion.length) {
+  new Chart(document.getElementById("completionChart"), {
+    type: "bar",
+    data: {
+      labels: chartData.completion.map(function (d) {
+        return d.graduationYear;
+      }),
+      datasets: [
+        {
+          label: "Completed",
+          data: chartData.completion.map(function (d) {
+            return d.averageCompletion;
+          }),
+          backgroundColor: "#107aff",
+        },
+        {
+          label: "Remaining",
+          data: chartData.completion.map(function (d) {
+            return 100 - d.averageCompletion;
+          }),
+          backgroundColor: "#e2e2e2",
+        },
+      ],
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: true, position: "right" },
+        tooltip: {
+          callbacks: {
+            afterBody: function (items) {
+              var d = chartData.completion[items[0].dataIndex];
+              return d.alumniCount + " alumni in this cohort";
+            },
+          },
+        },
+      },
+      scales: {
+        x: { title: { display: true, text: "Graduation year" }, stacked: true },
+        y: {
+          title: { display: true, text: "Completion %" },
+          stacked: true,
+          min: 0,
+          max: 100,
+        },
+      },
+    },
+  });
+}

@@ -123,6 +123,25 @@
       <p class="chart-empty">No data for these filters.</p>
     {{/if}}
   </div>
+
+  <div class="chart-card">
+    <h2>Post-graduation course completions</h2>
+    {{#if chartData.courses.length}}
+      <div class="chart-canvas-wrap"><canvas id="coursesChart"></canvas></div>
+    {{else}}
+      <p class="chart-empty">No data for these filters.</p>
+    {{/if}}
+  </div>
+
+  <div class="chart-card">
+    <h2>Profile completion by cohort</h2>
+    <p class="chart-subtitle">Average profile completion percentage, grouped by graduation year</p>
+    {{#if chartData.completion.length}}
+      <div class="chart-canvas-wrap"><canvas id="completionChart"></canvas></div>
+    {{else}}
+      <p class="chart-empty">No data for these filters.</p>
+    {{/if}}
+  </div>
 </div>
 
 <script>const chartData = {{{json chartData}}};</script>
