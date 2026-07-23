@@ -50,6 +50,52 @@
       <p class="chart-empty">No data for these filters.</p>
     {{/if}}
   </div>
+
+  <div class="chart-card">
+    <div class="chart-card-header">
+      <h2>Most common job titles</h2>
+      <label for="jobTitlesLimit">Top
+        <input
+          type="number"
+          id="jobTitlesLimit"
+          name="jobTitlesLimit"
+          value="{{filters.jobTitlesLimit}}"
+          min="1"
+          max="50"
+          form="chartFilters"
+          class="n-input"
+        />
+      </label>
+    </div>
+    {{#if chartData.jobTitles.length}}
+      <div class="chart-canvas-wrap"><canvas id="jobTitlesChart"></canvas></div>
+    {{else}}
+      <p class="chart-empty">No data for these filters.</p>
+    {{/if}}
+  </div>
+
+  <div class="chart-card">
+    <div class="chart-card-header">
+      <h2>Top employers</h2>
+      <label for="employersLimit">Top
+        <input
+          type="number"
+          id="employersLimit"
+          name="employersLimit"
+          value="{{filters.employersLimit}}"
+          min="1"
+          max="50"
+          form="chartFilters"
+          class="n-input"
+        />
+      </label>
+    </div>
+    {{#if chartData.employers.length}}
+      <div class="chart-canvas-wrap"><canvas id="employersChart"></canvas></div>
+    {{else}}
+      <p class="chart-empty">No data for these filters.</p>
+    {{/if}}
+  </div>
 </div>
 
 <script>const chartData = {{{json chartData}}};</script>

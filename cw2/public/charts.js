@@ -78,3 +78,67 @@ if (chartData.employmentSectors.length) {
     },
   });
 }
+
+if (chartData.jobTitles.length) {
+  new Chart(document.getElementById("jobTitlesChart"), {
+    type: "bar",
+    data: {
+      labels: chartData.jobTitles.map(function (d) {
+        return d.jobTitle;
+      }),
+      datasets: [
+        {
+          label: "Alumni",
+          data: chartData.jobTitles.map(function (d) {
+            return d.count;
+          }),
+          backgroundColor: "#107aff",
+        },
+      ],
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { title: { display: true, text: "Job title" } },
+        y: {
+          title: { display: true, text: "Alumni" },
+          ticks: { precision: 0 },
+        },
+      },
+    },
+  });
+}
+
+if (chartData.employers.length) {
+  new Chart(document.getElementById("employersChart"), {
+    type: "bar",
+    data: {
+      labels: chartData.employers.map(function (d) {
+        return d.employer;
+      }),
+      datasets: [
+        {
+          label: "Alumni",
+          data: chartData.employers.map(function (d) {
+            return d.count;
+          }),
+          backgroundColor: "#4a90d9",
+        },
+      ],
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { title: { display: true, text: "Employer" } },
+        y: {
+          title: { display: true, text: "Alumni" },
+          ticks: { precision: 0 },
+        },
+      },
+    },
+  });
+}

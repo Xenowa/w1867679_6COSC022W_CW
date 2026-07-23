@@ -7,6 +7,8 @@ exports.showCharts = async function (req, res, next) {
     programme: req.query.programme || "",
     graduationYear: req.query.graduationYear || "",
   };
+  const jobTitlesLimit = req.query.jobTitlesLimit || "10";
+  const employersLimit = req.query.employersLimit || "10";
 
   try {
     const [
@@ -21,8 +23,8 @@ exports.showCharts = async function (req, res, next) {
     ] = await Promise.all([
       apiClient.getSkillsGap(filters),
       apiClient.getEmploymentSectors(filters),
-      apiClient.getJobTitles(filters),
-      apiClient.getEmployers(filters),
+      apiClient.getJobTitles({ ...filters, limit: jobTitlesLimit }),
+      apiClient.getEmployers({ ...filters, limit: employersLimit }),
       apiClient.getLocations(filters),
       apiClient.getCertGrowth(filters),
       apiClient.getCourses(filters),
@@ -30,7 +32,7 @@ exports.showCharts = async function (req, res, next) {
     ]);
 
     res.render("charts/index", {
-      filters,
+      filters: { ...filters, jobTitlesLimit, employersLimit },
       chartData: {
         skillsGap: skillsGap.skillsGap,
         employmentSectors: employmentSectors.employmentSectors,
